@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard — JK Shopping</title>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700;800;900&family=Roboto:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f2eb;--paper:#fffdf7;--y:#F7C520;--b:#2B3FD4;--r:#C0281F;--k:#111;--mu:#777;--gr:rgba(43,63,212,0.07)}
+body{background:var(--bg);color:var(--k);font-family:'Roboto',sans-serif;
+  background-image:linear-gradient(var(--gr) 1px,transparent 1px),linear-gradient(90deg,var(--gr) 1px,transparent 1px);
+  background-size:24px 24px;min-height:100vh}
+.page{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+
+/* HEADER */
+.hdr{background:var(--k);border-radius:16px;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:32px}
+.hdr-tag{background:var(--y);color:#000;font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:3px 11px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.hdr-title{font-family:'Red Hat Display',sans-serif;font-size:clamp(32px,4.5vw,56px);font-weight:900;line-height:.95;color:#fff;text-transform:uppercase}
+.hdr-title span{color:var(--y)}
+.hdr-pills{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.pill{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:100px;padding:4px 13px;font-size:12px;color:rgba(255,255,255,0.55);display:block}
+.pill strong{color:#fff}
+
+/* FILTERS */
+.filters-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;align-items:center}
+.filter-label{font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-right:4px}
+.fb{background:var(--paper);border:2px solid rgba(0,0,0,0.12);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--k)}
+.fb:hover{border-color:var(--k)}
+.fb.active{border-color:var(--k);box-shadow:3px 3px 0 var(--k)}
+.fb.rA.active{background:var(--b);color:#fff;border-color:var(--b)}
+.fb.rB.active{background:var(--r);color:#fff;border-color:var(--r)}
+.fb.rC.active{background:var(--k);color:#fff}
+.fb.gF.active{background:#c0281f22;border-color:var(--r)}
+.fb.gM.active{background:#2b3fd422;border-color:var(--b)}
+.filter-sep{width:1px;height:20px;background:rgba(0,0,0,0.15)}
+.count-badge{background:var(--y);border:2px solid var(--k);border-radius:100px;padding:3px 12px;font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;margin-left:auto}
+
+/* SECTION LABEL */
+.sl{font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--mu);margin:32px 0 14px;display:flex;align-items:center;gap:10px}
+.sl::after{content:'';flex:1;height:1px;background:rgba(0,0,0,0.12)}
+
+/* GRID */
+.g{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* CARD */
+.card{background:var(--paper);border:2px solid var(--k);border-radius:14px;padding:20px;box-shadow:4px 4px 0 var(--k);transition:box-shadow .15s}
+.ct{font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:12px}
+
+/* STAT */
+.sn{font-family:'Red Hat Display',sans-serif;font-size:52px;font-weight:900;line-height:1;letter-spacing:-2px}
+.sl2{font-size:13px;color:var(--mu);margin-top:5px;line-height:1.4}
+.ssub{font-size:11px;color:#aaa;margin-top:2px}
+
+/* BAR */
+.bc{display:flex;flex-direction:column;gap:8px}
+.br{display:flex;flex-direction:column;gap:3px}
+.bm{display:flex;justify-content:space-between}
+.bn{font-size:12px;font-weight:500}
+.bp{font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:800}
+.bt{height:7px;background:rgba(0,0,0,0.08);border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.08)}
+.bf{height:100%;border-radius:10px;transition:width .4s ease}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip{background:rgba(0,0,0,0.06);border:1.5px solid rgba(0,0,0,0.1);border-radius:100px;padding:3px 11px;font-size:12px;font-weight:500}
+.chi{background:var(--y);border-color:var(--k);font-weight:700}
+.chi2{background:var(--b);border-color:var(--k);color:#fff;font-weight:700}
+
+/* RAMO HEADER */
+.rh{border-radius:10px 10px 0 0;padding:10px 18px;margin:-20px -20px 16px}
+.rt{font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;opacity:.7;color:#fff}
+.rtt{font-family:'Red Hat Display',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:#fff}
+
+/* INSIGHT */
+.ins{background:var(--y);border:2px solid var(--k);border-radius:10px;padding:12px 15px;box-shadow:3px 3px 0 var(--k);margin-top:12px}
+.insl{font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;opacity:.6}
+.inst{font-size:13px;line-height:1.5;font-weight:500}
+
+/* HBAND */
+.hb{border:2px solid var(--k);border-radius:12px;padding:16px 20px;box-shadow:3px 3px 0 var(--k);margin-bottom:12px;display:flex;align-items:center;gap:14px}
+.hbn{font-family:'Red Hat Display',sans-serif;font-size:48px;font-weight:900;line-height:1;flex-shrink:0}
+.hbt{font-size:13px;line-height:1.5}
+
+
+/* TABS */
+.tab-bar{display:flex;gap:6px;margin-bottom:28px;border-bottom:2px solid var(--k);padding-bottom:0;flex-wrap:wrap}
+.tab-btn{font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:10px 20px;border:2px solid var(--k);border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;background:rgba(0,0,0,0.04);color:var(--mu);margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{background:var(--k);color:#fff}
+.tab-btn:hover:not(.active){background:rgba(0,0,0,0.08)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* RESPOSTAS POR QUESTÃO */
+.qblock{margin-bottom:28px}
+.qblock-title{font-family:'Red Hat Display',sans-serif;font-size:14px;font-weight:800;margin-bottom:12px;padding:10px 16px;background:var(--k);color:#fff;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+.qblock-title span{font-size:11px;font-weight:400;opacity:.6;font-family:'Roboto',sans-serif}
+.resp-tags{display:flex;flex-wrap:wrap;gap:6px}
+.resp-tag{background:var(--paper);border:1.5px solid rgba(0,0,0,0.12);border-radius:100px;padding:5px 13px;font-size:12px;font-weight:500}
+.resp-tag.hi{background:var(--y);border-color:var(--k);font-weight:700}
+.resp-tag.blu{background:rgba(43,63,212,0.1);border-color:var(--b);color:var(--b)}
+.resp-tag.red{background:rgba(192,40,31,0.08);border-color:var(--r);color:var(--r)}
+
+/* RESPOSTAS INDIVIDUAIS */
+.resp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.resp-card{background:var(--paper);border:2px solid var(--k);border-radius:12px;padding:18px;box-shadow:3px 3px 0 var(--k)}
+.resp-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,0.1)}
+.resp-num{font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;opacity:.4}
+.ramo-badge{font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:100px;border:1.5px solid}
+.resp-field{margin-bottom:8px}
+.resp-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:2px}
+.resp-field-val{font-size:13px;line-height:1.5;color:var(--k)}
+.resp-divider{border:none;border-top:1px dashed rgba(0,0,0,0.12);margin:10px 0}
+
+/* REGION MAP */
+.reg-list{display:flex;flex-direction:column;gap:7px}
+.reg-row{display:flex;align-items:center;gap:8px}
+.reg-name{font-size:12px;font-weight:600;width:110px;flex-shrink:0}
+.reg-bar{flex:1;height:14px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,0.08)}
+.reg-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.reg-num{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;width:20px;text-align:right;flex-shrink:0}
+
+/* DONUT */
+.dw{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.dl{display:flex;flex-direction:column;gap:7px;flex:1}
+.li{display:flex;align-items:center;gap:7px}
+.ld{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--k);flex-shrink:0}
+.ll{font-size:12px;flex:1;font-weight:500}
+.lp{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800}
+
+/* EMPTY */
+.empty{padding:40px;text-align:center;color:var(--mu);font-size:13px;font-style:italic}
+</style>
+</head>
+<body>
+
+<style>
+#pw-overlay{position:fixed;inset:0;background:#f5f2eb;background-image:linear-gradient(rgba(43,63,212,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(43,63,212,0.07) 1px,transparent 1px);background-size:24px 24px;z-index:9999;display:flex;align-items:center;justify-content:center}
+.pw-box{background:#fffdf7;border:2px solid #111;border-radius:16px;padding:40px 36px;box-shadow:6px 6px 0 #111;width:100%;max-width:380px;text-align:center}
+.pw-title{font-family:'Red Hat Display',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;margin-bottom:6px}
+.pw-title span{color:#F7C520}
+.pw-sub{font-family:'Roboto',sans-serif;font-size:13px;color:#777;margin-bottom:28px}
+.pw-input{width:100%;border:2px solid #111;border-radius:10px;padding:12px 16px;font-family:'Roboto',sans-serif;font-size:15px;outline:none;background:#fff;box-shadow:3px 3px 0 #111;margin-bottom:14px;text-align:center;letter-spacing:2px}
+.pw-input:focus{border-color:#2B3FD4;box-shadow:3px 3px 0 #2B3FD4}
+.pw-btn{width:100%;background:#111;color:#fff;border:2px solid #111;border-radius:10px;padding:12px;font-family:'Red Hat Display',sans-serif;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;box-shadow:3px 3px 0 #F7C520;transition:all .15s}
+.pw-btn:hover{background:#2B3FD4;border-color:#2B3FD4}
+.pw-error{color:#C0281F;font-size:12px;font-family:'Roboto',sans-serif;margin-top:10px;display:none;font-weight:600}
+</style>
+<div id="pw-overlay">
+  <div class="pw-box">
+    <div class="pw-title">JK <span>Shopping</span></div>
+    <div class="pw-sub">Pesquisa de Hábitos de Consumo · 2026</div>
+    <input class="pw-input" id="pw-input" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <button class="pw-btn" onclick="checkPw()">Entrar</button>
+    <div class="pw-error" id="pw-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+<script>
+function checkPw(){
+  const v = document.getElementById('pw-input').value;
+  if(v === 'Real_2026'){
+    document.getElementById('pw-overlay').style.display='none';
+  } else {
+    const err = document.getElementById('pw-error');
+    err.style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+    setTimeout(()=>err.style.display='none', 3000);
+  }
+}
+</script>
+
+
+<style>
+#lock-screen{position:fixed;inset:0;background:#f5f2eb;background-image:linear-gradient(rgba(43,63,212,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(43,63,212,0.07) 1px,transparent 1px);background-size:24px 24px;display:flex;align-items:center;justify-content:center;z-index:9999}
+.lock-card{background:#111;border-radius:16px;padding:40px 44px;box-shadow:6px 6px 0 #F7C520;max-width:380px;width:90%;text-align:center}
+.lock-logo{font-family:'Red Hat Display',sans-serif;font-size:28px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:-1px;margin-bottom:6px}
+.lock-logo span{color:#F7C520}
+.lock-sub{font-size:12px;color:rgba(255,255,255,0.4);font-family:'Roboto',sans-serif;margin-bottom:28px;letter-spacing:1px;text-transform:uppercase}
+.lock-input{width:100%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px 16px;font-size:15px;font-family:'Roboto',sans-serif;color:#fff;text-align:center;letter-spacing:2px;outline:none;transition:border .2s}
+.lock-input:focus{border-color:#F7C520}
+.lock-btn{margin-top:14px;width:100%;background:#F7C520;border:2px solid #111;border-radius:8px;padding:12px;font-family:'Red Hat Display',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:2px;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,0.3);transition:transform .1s}
+.lock-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,0.3)}
+.lock-btn:active{transform:translate(1px,1px);box-shadow:2px 2px 0 rgba(0,0,0,0.3)}
+.lock-err{margin-top:10px;font-size:12px;color:#ff4d4d;font-family:'Roboto',sans-serif;min-height:16px;letter-spacing:.5px}
+</style>
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-logo">JK <span>Shopping</span></div>
+    <div class="lock-sub">Resultados da Pesquisa</div>
+    <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()"/>
+    <button class="lock-btn" onclick="checkPwd()">Acessar</button>
+    <div class="lock-err" id="lock-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('jk_auth')==='ok'){
+    document.getElementById('lock-screen').style.display='none';
+  }
+})();
+function checkPwd(){
+  const v=document.getElementById('lock-input').value;
+  if(v==='Real_2026'){
+    sessionStorage.setItem('jk_auth','ok');
+    document.getElementById('lock-screen').style.display='none';
+  } else {
+    document.getElementById('lock-err').textContent='Senha incorreta. Tente novamente.';
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-input').focus();
+  }
+}
+</script>
+
+<div class="page">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="hdr-tag">Pesquisa de Hábitos de Consumo</div>
+    <div class="hdr-title">JK <span>Shopping</span><br/>Resultados</div>
+  </div>
+  <div class="hdr-pills">
+    <span class="pill"><strong>49</strong> respostas válidas</span>
+    <span class="pill">Coleta: <strong>Março 2026</strong></span>
+    <span class="pill">Público: <strong>Distrito Federal</strong></span>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="filter-label">Ramo</span>
+  <button class="fb rA" onclick="toggleFilter('ramo','A',this)">A — Frequenta</button>
+  <button class="fb rB" onclick="toggleFilter('ramo','B',this)">B — Foi pouco</button>
+  <button class="fb rC" onclick="toggleFilter('ramo','C',this)">C — Nunca foi</button>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Gênero</span>
+  <button class="fb gF" onclick="toggleFilter('genero','Feminino',this)">Feminino</button>
+  <button class="fb gM" onclick="toggleFilter('genero','Masculino',this)">Masculino</button>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Região</span>
+  <select id="regiaoSelect" onchange="setRegiao(this.value)" style="background:var(--paper);border:2px solid rgba(0,0,0,0.12);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;color:var(--k)">
+    <option value="">Todas</option>
+  </select>
+  <button class="fb" onclick="clearFilters()" style="margin-left:4px;background:#f0ece3;border-color:rgba(0,0,0,0.2)">✕ Limpar</button>
+  <div class="count-badge" id="countBadge">37 selecionados</div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('questoes',this)">📋 Respostas por questão</button>
+  <button class="tab-btn" onclick="switchTab('individuais',this)">👤 Respostas individuais</button>
+</div>
+
+<!-- TAB: DASHBOARD -->
+<div class="tab-pane active" id="tab-dashboard">
+<!-- VISÃO GERAL -->
+<div class="sl">Visão geral</div>
+<div class="g g4" id="statsRow"></div>
+
+<!-- PERFIL -->
+<div class="sl">Perfil dos respondentes</div>
+<div class="g g3">
+  <div class="card">
+    <div class="ct">Faixa etária</div>
+    <div class="bc" id="idadeChart"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Gênero</div>
+    <div class="dw">
+      <svg id="generoDonut" width="76" height="76" viewBox="0 0 76 76"></svg>
+      <div class="dl" id="generoLegend"></div>
+    </div>
+    <div style="border-top:1px solid rgba(0,0,0,0.1);margin-top:14px;padding-top:12px">
+      <div class="ct">Etnia</div>
+      <div class="bc" id="etniaChart"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Região</div>
+    <div class="reg-list" id="regiaoChart"></div>
+    <div style="border-top:1px solid rgba(0,0,0,0.1);margin-top:12px;padding-top:12px">
+      <div class="ct">Ocupação</div>
+      <div class="chips" id="ocupChips"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HÁBITOS GERAIS -->
+<div class="sl">Hábitos de compra</div>
+<div class="g g3">
+  <div class="card">
+    <div class="ct">O que vem à mente ao pensar em compras</div>
+    <div class="bc" id="q1Chart"></div>
+    <div style="font-size:11px;color:var(--mu);margin-top:8px">*múltipla escolha</div>
+  </div>
+  <div class="card">
+    <div class="ct">Como decide onde comprar</div>
+    <div class="bc" id="q2Chart"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Frequência em shoppings</div>
+    <div class="bc" id="q3Chart" style="margin-bottom:16px"></div>
+    <div class="ct">Critério de escolha do shopping</div>
+    <div class="chips" id="q4Chips"></div>
+  </div>
+</div>
+
+<!-- RAMOS -->
+<div class="sl">Relação com o JK — por ramo</div>
+<div class="g g3">
+  <div class="card" id="ramoACard" style="border-color:var(--b)">
+    <div class="rh" style="background:var(--b)">
+      <div class="rt" id="ramoATag">Ramo A</div>
+      <div class="rtt">Frequenta o JK</div>
+    </div>
+    <div id="ramoAContent"></div>
+  </div>
+  <div class="card" id="ramoBCard" style="border-color:var(--r)">
+    <div class="rh" style="background:var(--r)">
+      <div class="rt" id="ramoBTag">Ramo B</div>
+      <div class="rtt">Foi pouco ao JK</div>
+    </div>
+    <div id="ramoBContent"></div>
+  </div>
+  <div class="card" id="ramoCCard" style="border-color:var(--k)">
+    <div class="rh" style="background:var(--k)">
+      <div class="rt" id="ramoCTag">Ramo C</div>
+      <div class="rtt">Nunca foi ao JK</div>
+    </div>
+    <div id="ramoCContent"></div>
+  </div>
+</div>
+
+<!-- SÍNTESE -->
+<div class="sl">Síntese estratégica</div>
+<div class="g g2">
+  <div id="syntheseLeft"></div>
+  <div class="card">
+    <div class="ct" style="margin-bottom:14px">O que movimentaria o público</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;gap:11px;padding:11px;background:rgba(247,197,32,0.18);border-radius:8px;border:1.5px solid rgba(0,0,0,0.1)"><div style="font-size:20px">🎭</div><div><div style="font-size:13px;font-weight:700">Eventos culturais</div><div style="font-size:12px;color:var(--mu)">Gatilho nº 1 — Ramo B</div></div></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:11px;background:rgba(43,63,212,0.07);border-radius:8px;border:1.5px solid rgba(0,0,0,0.1)"><div style="font-size:20px">🛍️</div><div><div style="font-size:13px;font-weight:700">Loja ou marca específica</div><div style="font-size:12px;color:var(--mu)">Gatilho nº 1 — Ramo C</div></div></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:11px;background:rgba(0,0,0,0.04);border-radius:8px;border:1.5px solid rgba(0,0,0,0.1)"><div style="font-size:20px">💸</div><div><div style="font-size:13px;font-weight:700">Promoções</div><div style="font-size:12px;color:var(--mu)">Aparece nos dois ramos B e C</div></div></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:11px;background:rgba(192,40,31,0.06);border-radius:8px;border:1.5px solid rgba(0,0,0,0.1)"><div style="font-size:20px">👫</div><div><div style="font-size:13px;font-weight:700">Ir com amigos ou família</div><div style="font-size:12px;color:var(--mu)">Fator social recorrente</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-dashboard -->
+
+<!-- TAB: QUESTÕES -->
+<div class="tab-pane" id="tab-questoes">
+  <div id="questoes-content"></div>
+</div>
+
+<!-- TAB: INDIVIDUAIS -->
+<div class="tab-pane" id="tab-individuais">
+  <div class="resp-grid" id="individuais-content"></div>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:40px;padding-top:18px;border-top:1px solid rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+  <div style="font-size:12px;color:var(--mu)">Pesquisa <strong style="color:var(--k)">Hábitos de Consumo — JK Shopping</strong> · 49 respostas válidas · Março 2026</div>
+  <div style="font-size:11px;color:#bbb">realcriativo.com</div>
+</div>
+
+</div>
+
+<script>
+const RAW = [{"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Ceilândia", "idade": "45 a 54", "etnia": "Parda", "ocup": "Outro", "q1": "Necessidade", "q2": "Prefiro ir em feiras e lojas de rua", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Falta de variedade", "q7b": "Nada específico", "q8b": "Conjunto Nacional", "q9b": "Mais variedade", "q10b": "Promoções", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Águas Claras", "idade": "45 a 54", "etnia": "Branca", "ocup": "Empreendedor(a)", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Taguatinga Shopping", "q9b": "Melhor localização", "q10b": "Outro motivo", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Águas Claras", "idade": "45 a 54", "etnia": "Prefiro não dizer", "ocup": "Empreendedor(a)", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Taguatinga Shopping", "q9b": "Melhor localização", "q10b": "Outro motivo", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Samambaia", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Nunca pensei sobre isso", "q7b": "Shopping movimentado", "q8b": "Taguatinga Shopping", "q9b": "Mais variedade", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Feminino", "regiao": "Gama", "idade": "35 a 44", "etnia": "Parda", "ocup": "Trabalho autônomo", "q1": "Necessidade, Economia, Lazer", "q2": "Compra online", "q3": "Raramente", "q4": "Estrutura", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Park Shopping", "q9b": "Melhor localização", "q10b": "Nada me faria considerar", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Outro", "regiao": "Taguatinga", "idade": "35 a 44", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Economia", "q2": "Compra online", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Taguatinga Shopping", "q9b": "Melhor localização", "q10b": "Nada me faria considerar", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Águas Claras", "idade": "25 a 34", "etnia": "Parda", "ocup": "Empreendedor(a)", "q1": "Necessidade", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Park Shopping", "q9b": "Ambiente mais agradável", "q10b": "Melhor ambiente", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Feminino", "regiao": "Samambaia", "idade": "35 a 44", "etnia": "Parda", "ocup": "Empreendedor(a)", "q1": "Necessidade, Economia", "q2": "Pesquisa antes e decide depois", "q3": "1x por mês", "q4": "Variedade de lojas", "q6a": "Cinema, Alimentação, Proximidade", "q7a": "Vai direto ao que precisa e vai embora", "q9a": "Promoções", "q8a1": "Concordo", "q8a2": "Concordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Sobradinho", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade", "q2": "Compra online", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping movimentado", "q8b": "Outro", "q9b": "Ambiente mais agradável", "q10b": "Ir com amigos/família", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Não informado", "regiao": "Plano Piloto", "idade": "45 a 54", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Estilo / identidade, Economia", "q2": "Compra online", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Conjunto Nacional", "q9b": "Melhor localização", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Feminino", "regiao": "Taguatinga", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Lazer, Estilo / identidade, Experiência", "q2": "Depende do que for comprar", "q3": "1x por semana ou mais", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Ambiente", "q7b": "Shopping movimentado", "q8b": "Park Shopping", "q9b": "Ambiente mais agradável", "q10b": "Melhor ambiente", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, vou com frequência", "genero": "Feminino", "regiao": "Ceilândia", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho autônomo", "q1": "Necessidade", "q2": "Compra online", "q3": "2–3x por mês", "q4": "Estrutura", "q6a": "Resolver algo específico", "q7a": "Vai direto ao que precisa e vai embora", "q9a": "Lojas ou marcas que ainda não estão no JK", "q8a1": "Discordo", "q8a2": "Discordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Não informado", "regiao": "Ceilândia", "idade": "18 a 24", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Experiência, Necessidade, Economia", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Eventos", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Não me identifico", "q7b": "Nada específico", "q8b": "Taguatinga Shopping", "q9b": "Costume", "q10b": "Um evento cultural", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Vicente Pires", "idade": "25 a 34", "etnia": "Preta", "ocup": "Estudante", "q1": "Economia", "q2": "Depende do que for comprar", "q3": "1x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Não me identifico", "q7b": "Shopping popular", "q8b": "Taguatinga Shopping", "q9b": "Ambiente mais agradável", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Não-binário", "regiao": "Ceilândia", "idade": "25 a 34", "etnia": "Preta", "ocup": "Trabalho autônomo", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Nunca pensei sobre isso", "q7b": "Shopping movimentado", "q8b": "Taguatinga Shopping", "q9b": "Costume", "q10b": "Um evento cultural", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Plano Piloto", "idade": "25 a 34", "etnia": "Parda", "ocup": "Outro", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "1x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping movimentado", "q8b": "Outro", "q9b": "Costume", "q10b": "Outro motivo", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Águas Claras", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Experiência, Estilo / identidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Falta de variedade", "q7b": "Nada específico", "q8b": "Conjunto Nacional", "q9b": "Mais variedade", "q10b": "Um evento cultural", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Masculino", "regiao": "Ceilândia", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho autônomo", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "2–3x por mês", "q4": "Experiência", "q6a": "Resolver algo específico", "q7a": "Passa por algumas lojas", "q9a": "Lojas ou marcas que ainda não estão no JK", "q8a1": "Discordo", "q8a2": "Discordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Não conheço", "genero": "Não informado", "regiao": "Sobradinho", "idade": "18 a 24", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Lazer, Passeio com família, Economia", "q2": "Pesquisa antes e decide depois", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Não sei dizer", "q7c": "Park Shopping", "q8c": "Mais variedade", "q9c": "Uma loja específica", "q10c": "Não"}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Masculino", "regiao": "Ceilândia", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho autônomo", "q1": "Necessidade, Economia, Experiência", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Localização", "q6a": "Cinema, Compras, Alimentação", "q7a": "Vai direto ao que precisa e vai embora", "q9a": "Nada mudaria", "q8a1": "Concordo", "q8a2": "Discordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Plano Piloto", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Estilo / identidade, Lazer, Necessidade", "q2": "Compra online", "q3": "1x por mês", "q4": "Estrutura", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Prefiro outro shopping", "q7b": "Nada específico", "q8b": "Park Shopping", "q9b": "Ambiente mais agradável", "q10b": "Nada me faria considerar", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Nunca fui", "genero": "Feminino", "regiao": "Riacho Fundo 01", "idade": "18 a 24", "etnia": "Parda", "ocup": "Outro", "q1": "Necessidade, Experiência, Estilo / identidade", "q2": "Depende do que for comprar", "q3": "1x por semana ou mais", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Nada específico", "q7c": "Park Shopping", "q8c": "Costume", "q9c": "Uma loja específica", "q10c": "Não"}, {"ramo": "C", "q5": "Nunca fui", "genero": "Masculino", "regiao": "Riacho Fundo I", "idade": "18 a 24", "etnia": "Preta", "ocup": "Trabalho formal", "q1": "Estilo / identidade, Economia, Necessidade", "q2": "Depende do que for comprar", "q3": "1x por semana ou mais", "q4": "Status / imagem", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Nada específico", "q7c": "Park Shopping", "q8c": "Melhor localização", "q9c": "Promoções", "q10c": "Não"}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Masculino", "regiao": "Vicente Pires", "idade": "35 a 44", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Economia", "q2": "Compra online", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Taguatinga Shopping", "q9b": "Melhor localização", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, vou com frequência", "genero": "Feminino", "regiao": "Ceilândia", "idade": "18 a 24", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Estilo / identidade", "q2": "Depende do que for comprar", "q3": "1x por semana ou mais", "q4": "Localização", "q6a": "Compras, Proximidade, Segurança", "q7a": "Vai sem destino definido", "q9a": "Lojas ou marcas que ainda não estão no JK", "q8a1": "Concordo", "q8a2": "Concordo", "q8a3": "Concordo totalmente", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Gama", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Lazer, Passeio com família", "q2": "Vai direto ao shopping", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping movimentado", "q8b": "Park Shopping", "q9b": "Mais variedade", "q10b": "Ir com amigos/família", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Gama", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Lazer, Passeio com família", "q2": "Vai direto ao shopping", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping movimentado", "q8b": "Park Shopping", "q9b": "Mais variedade", "q10b": "Ir com amigos/família", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Nunca fui", "genero": "Não informado", "regiao": "Recanto das Emas", "idade": "18 a 24", "etnia": "Parda", "ocup": "Estudante", "q1": "Necessidade, Estilo / identidade", "q2": "Compra online", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Nada específico", "q7c": "Taguatinga Shopping", "q8c": "Costume", "q9c": "Uma loja específica", "q10c": "Não"}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Feminino", "regiao": "Paranoa", "idade": "18 a 24", "etnia": "Branca", "ocup": "Estudante", "q1": "Experiência", "q2": "Pesquisa antes e decide depois", "q3": "1x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping popular", "q8b": "Outro", "q9b": "Melhor localização", "q10b": "Promoções", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Nunca fui", "genero": "Feminino", "regiao": "Sudoeste", "idade": "18 a 24", "etnia": "Preta", "ocup": "Trabalho autônomo", "q1": "Lazer, Necessidade, Economia", "q2": "Pesquisa antes e decide depois", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Não me identifico", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Não sei dizer", "q7c": "Outro", "q8c": "Melhor localização", "q9c": "Promoções", "q10c": "Não"}, {"ramo": "A", "q5": "Sim, vou com frequência", "genero": "Não informado", "regiao": "Ceilândia", "idade": "18 a 24", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Necessidade", "q2": "Prefiro ir em feiras e lojas de rua", "q3": "1x por mês", "q4": "Experiência", "q6a": "Cinema", "q7a": "Passa por algumas lojas", "q9a": "Promoções", "q8a1": "Concordo", "q8a2": "Concordo totalmente", "q8a3": "Concordo totalmente", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Feminino", "regiao": "Águas Claras", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Experiência", "q2": "Depende do que for comprar", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Park Shopping", "q9b": "Mais variedade", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Masculino", "regiao": "Asa Norte", "idade": "35 a 44", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Estilo / identidade, Necessidade", "q2": "Depende do que for comprar", "q3": "2–3x por mês", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Shopping movimentado", "q8b": "Conjunto Nacional", "q9b": "Melhor localização", "q10b": "Promoções", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Não informado", "regiao": "Ceilândia", "idade": "18 a 24", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Necessidade, Lazer, Estilo / identidade", "q2": "Depende do que for comprar", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "Cinema, Proximidade, Compras", "q7a": "Costuma circular bastante", "q9a": "Lojas ou marcas que ainda não estão no JK", "q8a1": "Concordo", "q8a2": "Concordo", "q8a3": "Discordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Feminino", "regiao": "Riacho Ii", "idade": "18 a 24", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Lazer, Passeio com família, Experiência", "q2": "Depende do que for comprar", "q3": "1x por semana ou mais", "q4": "Localização", "q6a": "Cinema, Alimentação, Passeio", "q7a": "Costuma circular bastante", "q9a": "Promoções", "q8a1": "Discordo", "q8a2": "Concordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Não informado", "regiao": "Taguatinga", "idade": "25 a 34", "etnia": "Parda", "ocup": "Empreendedor(a)", "q1": "Necessidade", "q2": "Vai direto ao shopping", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Nunca pensei sobre isso", "q7b": "Nada específico", "q8b": "Taguatinga Shopping", "q9b": "Mais variedade", "q10b": "Uma loja específica", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Nunca fui", "genero": "Feminino", "regiao": "Plano Piloto", "idade": "25 a 34", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade", "q2": "Compra online", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Shopping de bairro", "q7c": "Outro", "q8c": "Melhor localização", "q9c": "Nada me faria considerar", "q10c": "Não"}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Feminino", "regiao": "Ceilândia", "idade": "18 a 24", "etnia": "Parda", "ocup": "Estudante", "q1": "Necessidade, Estilo / identidade, Experiência", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "Compras, Cinema, Proximidade", "q7a": "Vai direto ao que precisa e vai embora", "q9a": "Mais eventos", "q8a1": "Concordo totalmente", "q8a2": "Concordo", "q8a3": "Concordo", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Park Sul", "idade": "35 a 44", "etnia": "Branca", "ocup": "Trabalho formal", "q1": "Necessidade, Lazer, Economia", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Localização", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Park Shopping", "q9b": "Melhor localização", "q10b": "Outro motivo", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Masculino", "regiao": "Guará", "idade": "35 a 44", "etnia": "Preta", "ocup": "Trabalho autônomo", "q1": "Estilo / identidade, Necessidade, Experiência", "q2": "Depende do que for comprar", "q3": "2–3x por mês", "q4": "Estrutura", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Taguatinga Shopping", "q9b": "Melhor localização", "q10b": "Um evento cultural", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Nunca fui", "genero": "Feminino", "regiao": "Park Way", "idade": "25 a 34", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Necessidade, Estilo / identidade, Experiência", "q2": "Pesquisa antes e decide depois", "q3": "1x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Nada específico", "q7c": "Park Shopping", "q8c": "Costume", "q9c": "Uma loja específica", "q10c": "Não"}, {"ramo": "A", "q5": "Sim, é o que mais vou", "genero": "Outro", "regiao": "Ceilândia", "idade": "35 a 44", "etnia": "Parda", "ocup": "Trabalho formal", "q1": "Necessidade, Lazer", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Experiência", "q6a": "Proximidade, Compras, Resolver algo específico", "q7a": "Passa por algumas lojas", "q9a": "Lojas ou marcas que ainda não estão no JK", "q8a1": "Concordo", "q8a2": "Discordo", "q8a3": "Concordo totalmente", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Feminino", "regiao": "Plano Piloto", "idade": "18 a 24", "etnia": "Preta", "ocup": "Trabalho autônomo", "q1": "Necessidade, Estilo / identidade, Economia", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Conjunto Nacional", "q9b": "Melhor localização", "q10b": "Um evento cultural", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "B", "q5": "Já fui algumas vezes", "genero": "Feminino", "regiao": "Park Sul", "idade": "18 a 24", "etnia": "Branca", "ocup": "Trabalho autônomo", "q1": "Estilo / identidade", "q2": "Vai direto ao shopping", "q3": "2–3x por mês", "q4": "Variedade de lojas", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Distância", "q7b": "Nada específico", "q8b": "Park Shopping", "q9b": "Melhor localização", "q10b": "Promoções", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}, {"ramo": "C", "q5": "Não conheço", "genero": "Não informado", "regiao": "Outra região do DF", "idade": "55+", "etnia": "Prefiro não dizer", "ocup": "Outro", "q1": "Necessidade", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Preço", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Outro", "q7c": "Outro", "q8c": "Outro", "q9c": "Outro motivo", "q10c": "Não"}, {"ramo": "C", "q5": "Não conheço", "genero": "Não informado", "regiao": "Águas Claras", "idade": "55+", "etnia": "Prefiro não dizer", "ocup": "Outro", "q1": "Lazer", "q2": "Depende do que for comprar", "q3": "Raramente", "q4": "Preço", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Outro", "q7c": "Outro", "q8c": "Outro", "q9c": "Outro motivo", "q10c": "Às vezes"}, {"ramo": "C", "q5": "Não conheço", "genero": "Não informado", "regiao": "Plano Piloto", "idade": "45 a 54", "etnia": "Prefiro não dizer", "ocup": "Outro", "q1": "Necessidade", "q2": "Pesquisa antes e decide depois", "q3": "Raramente", "q4": "Status / imagem", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Outro", "q7c": "Outro", "q8c": "Outro", "q9c": "Nada me faria considerar", "q10c": "Não"}, {"ramo": "C", "q5": "Nunca fui", "genero": "Não informado", "regiao": "Samambaia", "idade": "Até 17 anos", "etnia": "Prefiro não dizer", "ocup": "Outro", "q1": "Lazer", "q2": "Vai direto ao shopping", "q3": "1x por mês", "q4": "Experiência", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "", "q7b": "", "q8b": "", "q9b": "", "q10b": "", "q6c": "Outro", "q7c": "Outro", "q8c": "Melhor localização", "q9c": "Promoções", "q10c": "Não"}, {"ramo": "B", "q5": "Já fui, mas faz tempo", "genero": "Não informado", "regiao": "Ceilândia", "idade": "Até 17 anos", "etnia": "Preta", "ocup": "Estudante", "q1": "Lazer", "q2": "Compra online", "q3": "1x por mês", "q4": "Estrutura", "q6a": "", "q7a": "", "q9a": "", "q8a1": "", "q8a2": "", "q8a3": "", "q6b": "Segurança", "q7b": "Shopping popular", "q8b": "Terraço Shopping", "q9b": "Ambiente mais agradável", "q10b": "Ir com amigos/família", "q6c": "", "q7c": "", "q8c": "", "q9c": "", "q10c": ""}];
+
+// State
+let filters = {ramo: new Set(), genero: new Set(), regiao: ''};
+
+// Populate regiao select
+const regioes = [...new Set(RAW.map(r=>r.regiao).filter(Boolean))].sort();
+const sel = document.getElementById('regiaoSelect');
+regioes.forEach(r => {
+  const o = document.createElement('option');
+  o.value = r; o.textContent = r;
+  sel.appendChild(o);
+});
+
+function toggleFilter(type, val, btn) {
+  if (type === 'ramo' || type === 'genero') {
+    const s = filters[type];
+    if (s.has(val)) { s.delete(val); btn.classList.remove('active'); }
+    else { s.add(val); btn.classList.add('active'); }
+  }
+  render();
+}
+function setRegiao(val) { filters.regiao = val; render(); }
+function clearFilters() {
+  filters.ramo.clear(); filters.genero.clear(); filters.regiao = '';
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('active'));
+  document.getElementById('regiaoSelect').value = '';
+  render();
+}
+
+function getFiltered() {
+  return RAW.filter(r => {
+    if (filters.ramo.size > 0 && !filters.ramo.has(r.ramo)) return false;
+    if (filters.genero.size > 0 && !filters.genero.has(r.genero)) return false;
+    if (filters.regiao && r.regiao !== filters.regiao) return false;
+    return true;
+  });
+}
+
+function count(arr, key, split=false) {
+  const c = {};
+  arr.forEach(r => {
+    const v = r[key] || '';
+    if (!split) { c[v] = (c[v]||0)+1; }
+    else { v.split(',').map(x=>x.trim()).filter(Boolean).forEach(x => { c[x]=(c[x]||0)+1; }); }
+  });
+  return Object.entries(c).filter(([k])=>k).sort((a,b)=>b[1]-a[1]);
+}
+
+function pct(n, total) { return total ? Math.round(n/total*100) : 0; }
+
+function barHTML(entries, total, color='var(--b)', topN=6) {
+  return entries.slice(0,topN).map(([k,v]) =>
+    `<div class="br"><div class="bm"><span class="bn">${k}</span><span class="bp" style="color:${color}">${pct(v,total)}%</span></div>
+    <div class="bt"><div class="bf" style="width:${pct(v,total)}%;background:${color}"></div></div></div>`
+  ).join('');
+}
+
+function chipsHTML(entries, total, topN=6) {
+  return `<div class="chips">${entries.slice(0,topN).map(([k,v],i) =>
+    `<div class="chip ${i===0?'chi':''}">${k} ${pct(v,total)}%</div>`
+  ).join('')}</div>`;
+}
+
+function render() {
+  const d = getFiltered();
+  const n = d.length;
+  document.getElementById('countBadge').textContent = `${n} selecionado${n!==1?'s':''}`;
+
+  if (n === 0) {
+    ['statsRow','idadeChart','generoLegend','etniaChart','regiaoChart','ocupChips',
+     'q1Chart','q2Chart','q3Chart','q4Chips','ramoAContent','ramoBContent','ramoCContent','syntheseLeft']
+    .forEach(id => document.getElementById(id).innerHTML = '<div class="empty">Nenhum dado para os filtros selecionados</div>');
+    return;
+  }
+
+  const ramoA = d.filter(r=>r.ramo==='A'), ramoB = d.filter(r=>r.ramo==='B'), ramoC = d.filter(r=>r.ramo==='C');
+
+  // STATS
+  const pA = pct(ramoA.length, n), pB = pct(ramoB.length, n), pC = pct(ramoC.length, n);
+  const neverTop = ramoC.length ? pct(ramoC.filter(r=>r.q10c==='Não').length, ramoC.length) : 0;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="card"><div class="sn" style="color:var(--b)">${pA}%</div><div class="sl2">frequentam o JK regularmente</div><div class="ssub">${ramoA.length} de ${n} — Ramo A</div></div>
+    <div class="card"><div class="sn" style="color:var(--r)">${pB}%</div><div class="sl2">foram ao JK poucas vezes</div><div class="ssub">${ramoB.length} de ${n} — Ramo B</div></div>
+    <div class="card"><div class="sn" style="color:var(--k)">${pC}%</div><div class="sl2">nunca foram ou não conhecem</div><div class="ssub">${ramoC.length} de ${n} — Ramo C</div></div>
+    <div class="card"><div class="sn" style="color:var(--y);-webkit-text-stroke:1.5px var(--k)">${neverTop}%</div><div class="sl2">do Ramo C: JK não aparece como opção</div><div class="ssub">Top of mind crítico</div></div>`;
+
+  // IDADE
+  const idOrder = ['Até 17 anos','18 a 24','25 a 34','35 a 44','45 a 54','55+'];
+  const idC = count(d,'idade'); idC.sort((a,b)=>idOrder.indexOf(a[0])-idOrder.indexOf(b[0]));
+  document.getElementById('idadeChart').innerHTML = barHTML(idC, n, 'var(--b)');
+
+  // GÊNERO donut
+  const gC = Object.fromEntries(count(d,'genero'));
+  const gOrder = [['Feminino','var(--r)'],['Masculino','var(--b)'],['Não-binário','#888'],['Outro','#aaa'],['Não informado','#ddd']];
+  let offset = 47, r=28, circ=2*Math.PI*r;
+  let svgArcs = `<circle cx="38" cy="38" r="${r}" fill="none" stroke="#eee" stroke-width="12"/>`;
+  let legendHTML = '';
+  gOrder.forEach(([g,col]) => {
+    const v = gC[g]||0; if(!v) return;
+    const dash = (v/n)*circ, gap = circ-dash;
+    svgArcs += `<circle cx="38" cy="38" r="${r}" fill="none" stroke="${col}" stroke-width="12" stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>`;
+    offset -= dash;
+    legendHTML += `<div class="li"><div class="ld" style="background:${col}"></div><div class="ll">${g}</div><div class="lp" style="color:${col}">${pct(v,n)}%</div></div>`;
+  });
+  document.getElementById('generoDonut').innerHTML = svgArcs;
+  document.getElementById('generoLegend').innerHTML = legendHTML;
+
+  // ETNIA
+  document.getElementById('etniaChart').innerHTML = barHTML(count(d,'etnia'), n, 'var(--k)');
+
+  // REGIÃO — bar chart
+  const regC = count(d,'regiao');
+  const maxReg = regC[0] ? regC[0][1] : 1;
+  document.getElementById('regiaoChart').innerHTML = `<div class="reg-list">${
+    regC.slice(0,8).map(([k,v]) =>
+      `<div class="reg-row"><span class="reg-name">${k}</span>
+      <div class="reg-bar"><div class="reg-fill" style="width:${pct(v,maxReg)}%;background:${k==='Ceilândia'?'var(--b)':'var(--k)'}"></div></div>
+      <span class="reg-num">${v}</span></div>`
+    ).join('')
+  }</div>`;
+
+  // OCUPAÇÃO
+  document.getElementById('ocupChips').innerHTML = count(d,'ocup').slice(0,6).map(([k,v],i)=>
+    `<div class="chip ${i===0?'chi2':''}">${k} ${pct(v,n)}%</div>`).join('');
+
+  // Q1
+  document.getElementById('q1Chart').innerHTML = barHTML(count(d,'q1',true), n, 'var(--r)');
+
+  // Q2
+  document.getElementById('q2Chart').innerHTML = barHTML(count(d,'q2'), n, 'var(--k)');
+
+  // Q3
+  document.getElementById('q3Chart').innerHTML = barHTML(count(d,'q3'), n, 'var(--b)');
+
+  // Q4
+  document.getElementById('q4Chips').innerHTML = count(d,'q4').slice(0,6).map(([k,v],i)=>
+    `<div class="chip ${i===0?'chi':''}">${k} ${pct(v,n)}%</div>`).join('');
+
+  // RAMO TAGS
+  document.getElementById('ramoATag').textContent = `Ramo A · ${ramoA.length} pessoa${ramoA.length!==1?'s':''} · ${pA}%`;
+  document.getElementById('ramoBTag').textContent = `Ramo B · ${ramoB.length} pessoa${ramoB.length!==1?'s':''} · ${pB}%`;
+  document.getElementById('ramoCTag').textContent = `Ramo C · ${ramoC.length} pessoa${ramoC.length!==1?'s':''} · ${pC}%`;
+
+  // RAMO A
+  if (ramoA.length === 0) {
+    document.getElementById('ramoAContent').innerHTML = '<div class="empty">Nenhum dado com os filtros aplicados</div>';
+  } else {
+    const q6aC = count(ramoA,'q6a',true), q7aC=count(ramoA,'q7a'), q9aC=count(ramoA,'q9a');
+    document.getElementById('ramoAContent').innerHTML = `
+      <div class="ct">O que gosta no JK</div>${chipsHTML(q6aC,ramoA.length)}
+      <div class="ct" style="margin-top:14px">Como circula</div>
+      <div class="bc" style="margin-bottom:14px">${barHTML(q7aC,ramoA.length,'var(--b)',4)}</div>
+      <div class="ct">O que faria ir mais vezes</div>${chipsHTML(q9aC,ramoA.length)}
+      <div class="ins" style="background:rgba(43,63,212,0.1);border-color:var(--b)">
+        <div class="insl">Percepção (escala)</div>
+        <div class="inst">Funcionalidade e identidade: maioria <strong>Concorda</strong>. Território: maioria <strong>Concorda totalmente</strong>.</div>
+      </div>`;
+  }
+
+  // RAMO B
+  if (ramoB.length === 0) {
+    document.getElementById('ramoBContent').innerHTML = '<div class="empty">Nenhum dado com os filtros aplicados</div>';
+  } else {
+    const q6bC=count(ramoB,'q6b'), q7bC=count(ramoB,'q7b'), q8bC=count(ramoB,'q8b'), q10bC=count(ramoB,'q10b');
+    document.getElementById('ramoBContent').innerHTML = `
+      <div class="ct">Principal barreira</div>
+      <div class="bc" style="margin-bottom:14px">${barHTML(q6bC,ramoB.length,'var(--r)',5)}</div>
+      <div class="ct">Percepção do JK</div>${chipsHTML(q7bC,ramoB.length)}
+      <div class="ct" style="margin-top:12px">Shopping preferido</div>${chipsHTML(q8bC,ramoB.length)}
+      <div class="ct" style="margin-top:12px">O que faria considerar o JK</div>${chipsHTML(q10bC,ramoB.length)}`;
+  }
+
+  // RAMO C
+  if (ramoC.length === 0) {
+    document.getElementById('ramoCContent').innerHTML = '<div class="empty">Nenhum dado com os filtros aplicados</div>';
+  } else {
+    const q6cC=count(ramoC,'q6c'), q7cC=count(ramoC,'q7c'), q9cC=count(ramoC,'q9c'), q10cC=count(ramoC,'q10c');
+    const naoTop = ramoC.filter(r=>r.q10c==='Não').length;
+    document.getElementById('ramoCContent').innerHTML = `
+      <div class="ct">Percepção do JK</div>${chipsHTML(q6cC,ramoC.length)}
+      <div class="ct" style="margin-top:12px">Shopping que frequenta</div>${chipsHTML(q7cC,ramoC.length)}
+      <div class="ct" style="margin-top:12px">O que faria considerar o JK</div>${chipsHTML(q9cC,ramoC.length)}
+      <div class="ins" style="background:#f0ece3;border-color:var(--k)">
+        <div class="insl">Dado crítico</div>
+        <div class="inst"><strong>${pct(naoTop,ramoC.length)}%</strong> diz que o JK <strong>não aparece como opção</strong> de compra.</div>
+      </div>`;
+  }
+
+  // SÍNTESE
+  const distPct = ramoB.length ? pct(ramoB.filter(r=>r.q6b==='Distância').length, ramoB.length) : 0;
+  const varPct = pct(count(d,'q4').find(([k])=>k==='Variedade de lojas')?.[1]||0, n);
+  document.getElementById('syntheseLeft').innerHTML = `
+    <div class="hb" style="background:var(--y)">
+      <div class="hbn">${distPct}%</div>
+      <div class="hbt"><strong>distância</strong> é a barreira principal para quem foi pouco</div>
+    </div>
+    <div class="hb" style="background:rgba(43,63,212,0.09);border-color:var(--b)">
+      <div class="hbn" style="color:var(--b)">${neverTop}%</div>
+      <div class="hbt">do Ramo C: JK não aparece quando decidem onde comprar</div>
+    </div>
+    <div class="hb" style="background:rgba(192,40,31,0.07);border-color:var(--r)">
+      <div class="hbn" style="color:var(--r)">${varPct}%</div>
+      <div class="hbt"><strong>variedade de lojas</strong> é o principal critério de escolha do shopping</div>
+    </div>`;
+}
+
+render();
+
+// Tab switching
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'questoes') renderQuestoes();
+  if (name === 'individuais') renderIndividuais();
+}
+
+// QUESTÕES
+const QMAP = [
+  {key:'q1', label:'Q1 — O que vem à mente quando pensa em compras?', split:true, all:true},
+  {key:'q2', label:'Q2 — Como decide onde comprar?', all:true},
+  {key:'q3', label:'Q3 — Com que frequência frequenta shoppings?', all:true},
+  {key:'q4', label:'Q4 — O que mais influencia a escolha do shopping?', all:true},
+  {key:'q5', label:'Q5 — Você já foi ao JK Shopping?', all:true},
+  {key:'q6a', label:'Q6A — O que você gosta no JK?', split:true, ramo:'A'},
+  {key:'q7a', label:'Q7A — Como você circula pelo JK?', ramo:'A'},
+  {key:'q9a', label:'Q9A — O que faria você ir mais vezes?', ramo:'A'},
+  {key:'q6b', label:'Q6B — O que pesa na decisão de ir pouco?', ramo:'B'},
+  {key:'q7b', label:'Q7B — Quando pensa no JK, o que vem à mente?', ramo:'B'},
+  {key:'q8b', label:'Q8B — Qual shopping você prefere?', ramo:'B'},
+  {key:'q9b', label:'Q9B — O que esse shopping tem que o JK não tem?', ramo:'B'},
+  {key:'q10b', label:'Q10B — O que faria você considerar o JK?', ramo:'B'},
+  {key:'q6c', label:'Q6C — Quando pensa no JK, o que vem à mente?', ramo:'C'},
+  {key:'q7c', label:'Q7C — Qual shopping você frequenta?', ramo:'C'},
+  {key:'q8c', label:'Q8C — O que esse shopping tem que faz você escolhê-lo?', ramo:'C'},
+  {key:'q9c', label:'Q9C — O que faria você considerar o JK?', ramo:'C'},
+  {key:'q10c', label:'Q10C — O JK aparece como opção quando decide comprar?', ramo:'C'},
+];
+
+function renderQuestoes() {
+  const d = getFiltered();
+  if (!d.length) { document.getElementById('questoes-content').innerHTML = '<div class="empty">Nenhum dado para os filtros selecionados</div>'; return; }
+  
+  let html = '';
+  QMAP.forEach(q => {
+    const subset = q.ramo ? d.filter(r => r.ramo === q.ramo) : d;
+    const vals = [];
+    subset.forEach(r => {
+      const v = r[q.key] || '';
+      if (!v || v.toLowerCase() === 'outro') return;
+      if (q.split) { v.split(',').map(x=>x.trim()).filter(Boolean).forEach(x => vals.push(x)); }
+      else { vals.push(v); }
+    });
+    if (!vals.length) return;
+    
+    // Count
+    const cnt = {};
+    vals.forEach(v => cnt[v] = (cnt[v]||0)+1);
+    const sorted = Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+    const total = subset.length;
+    
+    const rLabel = q.ramo ? ` <span>Ramo ${q.ramo} — ${subset.length} respondentes</span>` : `<span>Todos — ${total} respondentes</span>`;
+    const ramoColor = q.ramo === 'A' ? 'var(--b)' : q.ramo === 'B' ? 'var(--r)' : q.ramo === 'C' ? 'var(--k)' : 'var(--k)';
+    
+    html += `<div class="qblock">
+      <div class="qblock-title" style="background:${ramoColor}">${q.label}${rLabel}</div>
+      <div class="resp-tags">${
+        sorted.map(([k,v], i) => {
+          const pct = Math.round(v/total*100);
+          const cls = i === 0 ? 'resp-tag hi' : q.ramo === 'A' ? 'resp-tag blu' : q.ramo === 'B' ? 'resp-tag red' : 'resp-tag';
+          return `<div class="${cls}">${k} <strong>${pct}%</strong> <span style="opacity:.5;font-size:11px">×${v}</span></div>`;
+        }).join('')
+      }</div>
+    </div>`;
+  });
+  document.getElementById('questoes-content').innerHTML = html;
+}
+
+// INDIVIDUAIS
+function renderIndividuais() {
+  const d = getFiltered();
+  if (!d.length) { document.getElementById('individuais-content').innerHTML = '<div class="empty" style="grid-column:1/-1">Nenhum dado para os filtros selecionados</div>'; return; }
+  
+  const ramoColors = {A: 'var(--b)', B: 'var(--r)', C: 'var(--k)'};
+  const ramoBg = {A: 'rgba(43,63,212,0.1)', B: 'rgba(192,40,31,0.08)', C: 'rgba(0,0,0,0.06)'};
+  
+  document.getElementById('individuais-content').innerHTML = d.map((r, i) => {
+    const col = ramoColors[r.ramo] || 'var(--k)';
+    const bg = ramoBg[r.ramo] || '';
+    
+    // Build specific questions based on ramo
+    let especificas = '';
+    if (r.ramo === 'A') {
+      especificas = `
+        ${r.q6a ? `<div class="resp-field"><div class="resp-field-label">O que gosta no JK</div><div class="resp-field-val">${r.q6a}</div></div>` : ''}
+        ${r.q7a ? `<div class="resp-field"><div class="resp-field-label">Como circula</div><div class="resp-field-val">${r.q7a}</div></div>` : ''}
+        ${r.q9a ? `<div class="resp-field"><div class="resp-field-label">O que faria ir mais</div><div class="resp-field-val">${r.q9a}</div></div>` : ''}`;
+    } else if (r.ramo === 'B') {
+      especificas = `
+        ${r.q6b ? `<div class="resp-field"><div class="resp-field-label">Barreira</div><div class="resp-field-val">${r.q6b}</div></div>` : ''}
+        ${r.q7b ? `<div class="resp-field"><div class="resp-field-label">Percepção do JK</div><div class="resp-field-val">${r.q7b}</div></div>` : ''}
+        ${r.q8b ? `<div class="resp-field"><div class="resp-field-label">Shopping preferido</div><div class="resp-field-val">${r.q8b}</div></div>` : ''}
+        ${r.q9b ? `<div class="resp-field"><div class="resp-field-label">O que esse shopping tem</div><div class="resp-field-val">${r.q9b}</div></div>` : ''}
+        ${r.q10b ? `<div class="resp-field"><div class="resp-field-label">O que faria ir ao JK</div><div class="resp-field-val">${r.q10b}</div></div>` : ''}`;
+    } else if (r.ramo === 'C') {
+      especificas = `
+        ${r.q6c ? `<div class="resp-field"><div class="resp-field-label">Percepção do JK</div><div class="resp-field-val">${r.q6c}</div></div>` : ''}
+        ${r.q7c ? `<div class="resp-field"><div class="resp-field-label">Shopping que frequenta</div><div class="resp-field-val">${r.q7c}</div></div>` : ''}
+        ${r.q8c ? `<div class="resp-field"><div class="resp-field-label">Por que escolhe esse</div><div class="resp-field-val">${r.q8c}</div></div>` : ''}
+        ${r.q9c ? `<div class="resp-field"><div class="resp-field-label">O que faria ir ao JK</div><div class="resp-field-val">${r.q9c}</div></div>` : ''}
+        ${r.q10c ? `<div class="resp-field"><div class="resp-field-label">JK aparece como opção?</div><div class="resp-field-val">${r.q10c}</div></div>` : ''}`;
+    }
+    
+    return `<div class="resp-card">
+      <div class="resp-card-header">
+        <span class="resp-num">Respondente #${i+1}</span>
+        <span class="ramo-badge" style="background:${bg};border-color:${col};color:${col}">Ramo ${r.ramo}</span>
+      </div>
+      <div class="resp-field"><div class="resp-field-label">Região</div><div class="resp-field-val">${r.regiao||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Idade</div><div class="resp-field-val">${r.idade||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Gênero</div><div class="resp-field-val">${r.genero||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Etnia</div><div class="resp-field-val">${r.etnia||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Ocupação</div><div class="resp-field-val">${r.ocup||'—'}</div></div>
+      <hr class="resp-divider"/>
+      <div class="resp-field"><div class="resp-field-label">O que vem à mente ao comprar</div><div class="resp-field-val">${r.q1||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Como decide onde comprar</div><div class="resp-field-val">${r.q2||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Frequência em shoppings</div><div class="resp-field-val">${r.q3||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Critério de escolha</div><div class="resp-field-val">${r.q4||'—'}</div></div>
+      <div class="resp-field"><div class="resp-field-label">Relação com o JK</div><div class="resp-field-val">${r.q5||'—'}</div></div>
+      <hr class="resp-divider"/>
+      ${especificas}
+    </div>`;
+  }).join('');
+}
+
+</script>
+</body>
+</html>
